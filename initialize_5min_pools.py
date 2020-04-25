@@ -2,6 +2,7 @@ from datetime import datetime
 from datetime import timedelta
 from process_pools_from_laguardia import main_from
 from process_pools_to_laguardia import main_to
+import json
 
 
 def initialize_pool_5_min(trips, direction):
@@ -13,7 +14,7 @@ def initialize_pool_5_min(trips, direction):
     distance_5 = []
     i = 0
 
-    while i < len(trips["VendorID"]):
+    while i < len(trips["vendorid"]):
 
         if not pool_5_ongoing:
             pool_5_ongoing = True
@@ -37,10 +38,21 @@ def initialize_pool_5_min(trips, direction):
 
                 # Call max_from or max_to from here
                 if direction == "to":
-                    main_to(pools, pool_5_index)
-                else:
-                    main_from(pools, pool_5_index)
+                    pool_info = main_to(pools, pool_5_index)
+                    global_pool_info[pool_5_index] = pool_info[pool_5_index]
 
+                    # Create the month's folder inside the folder 5min_pools_info (or whatever folder name you are using)
+                    # and save the file inside that folder
+                    with open("D:\\UIC\\Database Management Systems\\Taxi Ridesharing\\5min_pools_info\\January\\pool_5min_to_laguardia.json", "w") as fp:
+                        json.dump(global_pool_info, fp)
+                else:
+                    pool_info = main_from(pools, pool_5_index)
+                    global_pool_info[pool_5_index] = pool_info[pool_5_index]
+
+                    # Create the month's folder inside the folder 5min_pools_info (or whatever folder name you are using)
+                    # and save the file inside that folder
+                    with open("D:\\UIC\\Database Management Systems\\Taxi Ridesharing\\5min_pools_info\\January\\pool_5min_from_laguardia.json", "w") as fp:
+                        json.dump(global_pool_info, fp)
                 continue
 
             else:
@@ -52,3 +64,6 @@ def initialize_pool_5_min(trips, direction):
             pools[pool_5_index]["pickup"] = pickup_coord_5
             pools[pool_5_index]["destination"] = destination_coord_5
             pools[pool_5_index]["distance"] = distance_5
+
+
+global_pool_info = {}
