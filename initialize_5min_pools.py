@@ -5,6 +5,22 @@ from process_pools_to_laguardia import main_to
 import json
 
 
+def get_date(date_string):
+    try:
+        date = datetime.strptime(date_string, '%m/%d/%Y')
+    except ValueError:
+        date = datetime.strptime(date_string, '%Y-%m-%d')
+    return date
+
+
+def get_time(time_string):
+    try:
+        time = datetime.strptime(time_string, '%H:%M')
+    except ValueError:
+        time = datetime.strptime(time_string, '%H:%M:%S')
+    return time
+
+
 def initialize_pool_5_min(trips, direction):
     pools = {}
     pool_5_ongoing = False
@@ -13,8 +29,17 @@ def initialize_pool_5_min(trips, direction):
     destination_coord_5 = []
     distance_5 = []
     i = 0
+    start_date = None
 
     while i < len(trips["vendorid"]):
+
+        if start_date is None:
+            start_date = get_date(trips["tpep_pickup_datetime"][i].split()[0])
+        else:
+            current_date = get_date(trips["tpep_pickup_datetime"][i].split()[0])
+            if current_date > start_date:
+                start_date = get_date(trips["tpep_pickup_datetime"][i].split()[0])
+                pool_5_ongoing = False
 
         if not pool_5_ongoing:
             pool_5_ongoing = True
@@ -27,8 +52,8 @@ def initialize_pool_5_min(trips, direction):
 
         else:
             current_time = trips["tpep_pickup_datetime"][i].split()[1]
-            if datetime.strptime(current_time, "%H:%M") > datetime.strptime(start_5_min, "%H:%M") + timedelta(
-                    minutes=5):
+            if get_time(current_time) > (get_time(start_5_min) + timedelta(
+                    minutes=5)):
                 print("Pool {0} obtained".format(pool_5_index))
 
                 pool_5_ongoing = False
@@ -38,21 +63,27 @@ def initialize_pool_5_min(trips, direction):
 
                 # Call max_from or max_to from here
                 if direction == "to":
-                    pool_info = main_to(pools, pool_5_index)
-                    global_pool_info[pool_5_index] = pool_info[pool_5_index]
 
-                    # Create the month's folder inside the folder 5min_pools_info (or whatever folder name you are using)
-                    # and save the file inside that folder
-                    with open("D:\\UIC\\Database Management Systems\\Taxi Ridesharing\\5min_pools_info\\January\\pool_5min_to_laguardia.json", "w") as fp:
-                        json.dump(global_pool_info, fp)
+                    # If you are just starting to process a month from the 1st day, then change the condition to be ' >= 0 '
+                    if pool_5_index >= 0: # Change this number to be the pool number after the last pool processed in the last day
+                        pool_info = main_to(pools, pool_5_index)
+                        global_pool_info[pool_5_index] = pool_info[pool_5_index]
+
+                        # Create the month's folder inside the folder 5min_pools_info (or whatever folder name you are using)
+                        # and save the file inside that folder
+                        with open("D:\\UIC\\Database Management Systems\\Taxi Ridesharing\\5min_pools_info\\January\\pool_5min_to_laguardia.json", "w") as fp:
+                            json.dump(global_pool_info, fp)
                 else:
-                    pool_info = main_from(pools, pool_5_index)
-                    global_pool_info[pool_5_index] = pool_info[pool_5_index]
 
-                    # Create the month's folder inside the folder 5min_pools_info (or whatever folder name you are using)
-                    # and save the file inside that folder
-                    with open("D:\\UIC\\Database Management Systems\\Taxi Ridesharing\\5min_pools_info\\January\\pool_5min_from_laguardia.json", "w") as fp:
-                        json.dump(global_pool_info, fp)
+                    # If you are just starting to process a month from the 1st day then change the condition to be ' >= 0 '
+                    if pool_5_index >= 0: # Change this number to be the pool number after the last pool processed in the last day
+                        pool_info = main_from(pools, pool_5_index)
+                        global_pool_info[pool_5_index] = pool_info[pool_5_index]
+
+                        # Create the month's folder inside the folder 5min_pools_info (or whatever folder name you are using)
+                        # and save the file inside that folder
+                        with open("D:\\UIC\\Database Management Systems\\Taxi Ridesharing\\5min_pools_info\\January\\pool_5min_from_laguardia.json", "w") as fp:
+                            json.dump(global_pool_info, fp)
                 continue
 
             else:
