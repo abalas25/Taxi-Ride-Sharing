@@ -65,7 +65,7 @@ def initialize_pool_5_min(trips, direction):
                 if direction == "to":
 
                     # If you are just starting to process a month from the 1st day, then change the condition to be ' >= 0 '
-                    if pool_5_index >= 0: # Change this number to be the pool number after the last pool processed in the last day
+                    if pool_5_index >= 0: # Change this number to be the pool number after the last pool processed for the 1st day
                         pool_info = main_to(pools, pool_5_index)
                         global_pool_info[pool_5_index] = pool_info[pool_5_index]
 
@@ -76,7 +76,7 @@ def initialize_pool_5_min(trips, direction):
                 else:
 
                     # If you are just starting to process a month from the 1st day then change the condition to be ' >= 0 '
-                    if pool_5_index >= 0: # Change this number to be the pool number after the last pool processed in the last day
+                    if pool_5_index >= 0: # Change this number to be the pool number after the last pool processed for the 1st day
                         pool_info = main_from(pools, pool_5_index)
                         global_pool_info[pool_5_index] = pool_info[pool_5_index]
 
