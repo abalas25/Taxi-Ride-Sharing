@@ -13,8 +13,9 @@
   
   - Run the above command for all 4 sql files (*disc_manhattan_points.sql*, *dropoffs_5_table.sql*, *dropoffs_10_table.sql* and  *lag_pt_dist_time.sql*)
   - The Tables will be added to your database for querying
-   
+  - Python version used is 3.7.4.
   - Provide the same database credentials in the *init_db.py* file
+  - Connect the program environment to the postgresql database and install the psycopg2 library for python.
   - Running the program:
     - To start with, you would need to edit the *main.py* file to open the correct trips file by providing the correct path to it.
     - Change the direction in the main.py file to be either *from* (from laguardia) or *to* (to laguardia)
