@@ -71,9 +71,9 @@ def main_to(pool, pno):
 
             trip_2 = pool[pno]["pickup"][j]
             src2 = get_nearest_point(trip_2[0], trip_2[1])[:-1]
-
-            # To remove optimization and process all combination of trips, comment the following 3 lines
             new_distance = get_distance(src1[0], src1[1], src2[0], src2[1])
+            
+            # To remove optimization and process all combination of trips, comment the following 2 lines
             if new_distance > min_non_share_dist:
                 continue
 
