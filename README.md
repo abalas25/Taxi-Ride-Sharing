@@ -5,7 +5,7 @@
   ```
     create extension postgis;
   ```  
-  - Import the tables from the sql files provided in the repository (Ensure that you have the psql command line query tool installed and run the following in your regular command line):
+  - Import the tables from the sql files provided in the repository (Ensure that you have the psql command line query tool installed, added to ENV PATH, and then run the following in your regular command line):
   ```
   psql -U db_username -p db_port -d database_name < path to sql file (Enter your db password if prompted to)
   
