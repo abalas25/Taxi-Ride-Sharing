@@ -61,7 +61,7 @@ def initialize_pool_5_min(trips, direction):
                 pools[pool_5_index]["destination"] = destination_coord_5
                 pools[pool_5_index]["distance"] = distance_5
 
-                # Call max_from or max_to from here
+                # Call main_from or main_to from here
                 if direction == "to":
 
                     # If you are just starting to process a month from the 1st day, then change the condition to be ' >= 0 '
