@@ -5,6 +5,7 @@ from get_postgres_data import get_distance
 from get_postgres_data import get_nearest_point
 from max_match_dist_time_metrics import max_match
 import json
+import sys
 
 
 def check_shareable_to_laguardia(src1, delay1, src2, delay2, src1_lag_dist, src2_lag_dist):
@@ -45,6 +46,7 @@ def main_to(pool, pno):
 
     for i in range(len(pool[pno]["pickup"])):
 
+        min_non_share_dist = sys.maxsize
         if i not in individual_trip_dist.keys():
             individual_trip_dist[i] = pool[pno]["distance"][i]
 
@@ -70,6 +72,11 @@ def main_to(pool, pno):
             trip_2 = pool[pno]["pickup"][j]
             src2 = get_nearest_point(trip_2[0], trip_2[1])[:-1]
 
+            # To remove optimization and process all combination of trips, comment the following 3 lines
+            new_distance = get_distance(src1[0], src1[1], src2[0], src2[1])
+            if new_distance > min_non_share_dist:
+                continue
+
             curr.execute("select time from lag_pt_dist_time where lon2 = " + str(src2[0]) + " and lat2 = " + str(src2[1]))
             result = curr.fetchall()
             if len(result) > 0:
@@ -88,6 +95,9 @@ def main_to(pool, pno):
                 if (j+1) not in dist.keys():
                     dist[j+1] = {}
                 dist[j+1][i+1] = dist_saved
+            else:
+                # Update min_non_share_dist
+                min_non_share_dist = new_distance
 
         print("Trip {0} done. {1} trips shareable with this trip.".format(i+1, num_shareable))
 

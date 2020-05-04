@@ -5,7 +5,7 @@ from get_postgres_data import get_nearest_point
 from get_postgres_data import get_dropoffs
 from max_match_dist_time_metrics import max_match
 import json
-
+import sys
 
 def no_walks_shareable(dest1, delay1, dest2, delay2, src, src_dest1_dist, src_dest2_dist):
 
@@ -106,6 +106,7 @@ def main_from(pool, pno):
 
     # Go over each trip A
     for i in range(len(pool[pno]["destination"])):
+        min_non_share_dist = sys.maxsize
 
         if i not in individual_trip_dist.keys():
             individual_trip_dist[i] = pool[pno]["distance"][i]
@@ -129,11 +130,18 @@ def main_from(pool, pno):
 
         for j in range(i+1, len(pool[pno]["destination"])): # Go over every other trip B
 
+
             if j not in individual_trip_dist.keys():
                 individual_trip_dist[j] = pool[pno]["distance"][j]
 
             trip_2 = pool[pno]["destination"][j]
             dest2 = get_nearest_point(trip_2[0], trip_2[1])[:-1]
+
+            # To remove optimization and process all combination of trips, comment the following 3 lines
+            new_distance = get_distance(dest1[0], dest1[1], dest2[0], dest2[1])
+            if new_distance > min_non_share_dist:
+                continue
+
             drops2 = get_dropoffs(dest2[0], dest2[1])
 
             curr.execute(
@@ -167,6 +175,11 @@ def main_from(pool, pno):
                     if (j+1) not in dist.keys():
                         dist[j+1] = {}
                     dist[j+1][i+1] = dist_saved
+
+                else:
+                    # Update min_non_share_distance
+                    if new_distance < min_non_share_dist:
+                        min_non_share_dist = new_distance
 
         print("Trip {0} done. {1} trips shareable with this trip.".format(i+1, num_shareable))
 

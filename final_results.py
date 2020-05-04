@@ -1,3 +1,6 @@
+import json
+
+
 def find_num_trips(pool):
     total_num_trips = []
     num_trips_saved = []
@@ -20,6 +23,7 @@ def find_avg_distance_saved(pool):
     avg_distance_saved = []
 
     for pno in pool.keys():
+
         total_distance.append(pool[pno]["total_dist"])
         distance_saved.append(pool[pno]["dist_saved"])
         if pool[pno]["total_dist"] != 0.0:
@@ -46,3 +50,17 @@ def find_trips_per_pool(pool):
         no_of_pools.append(pool[pno]["total_num_trips"])
 
     return round(sum(no_of_pools) / len(no_of_pools))
+
+
+def find_total_trips(pool):
+    trips = 0
+    for pno in pool.keys():
+        trips += pool[pno]["total_num_trips"]
+    return trips
+
+
+def find_distance_error(pool):
+    error = 0
+    for pno in pool.keys():
+        error += pool[pno]["average_distance_error"]
+    return error / len(pool.keys())
