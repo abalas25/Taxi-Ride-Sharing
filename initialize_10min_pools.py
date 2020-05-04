@@ -59,7 +59,7 @@ def initialize_pool_10_min(trips, direction):
                 pool_10_min[pool_10_index]["destination"] = destination_coord_10
                 pool_10_min[pool_10_index]["distance"] = distance_10
 
-                # Call max_from or max_to from here
+                # Call main_from or main_to from here
                 if direction == "to":
                     # If you are just starting to process a month from the 1st day, then change the condition to ' >= 0 '
                     if pool_10_index >= 0: # If program stopped for some reason, change this number to be the next pool after the last pool number processed
@@ -73,7 +73,7 @@ def initialize_pool_10_min(trips, direction):
                         with open("D:\\UIC\\Database Management Systems\\Taxi Ridesharing\\10min_pools_info\\January\\pool_10min_to_laguardia.json", "w") as fp:
                             json.dump(global_pool_info, fp)
                 else:
-
+                    # If you are just starting to process a month from the 1st day, then change the condition to ' >= 0 '
                     if pool_10_index >= 0: # If program stopped for some reason, change this number to be the next pool after the last pool number processed
                         pool_info = main_from(pool_10_min, pool_10_index)
                         global_pool_info[pool_10_index] = pool_info[pool_10_index]
